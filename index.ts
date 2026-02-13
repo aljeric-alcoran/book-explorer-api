@@ -11,7 +11,8 @@ const app = express();
 dotenv.config({ path: '.env' });
 
 const allowedOrigins = [
-   "http://localhost:5173"
+   "http://localhost:5173",
+   "https://book-explorer-ci7b.onrender.com"
 ];
  
 app.use(cors({
