@@ -7,20 +7,22 @@ const router = Router();
 // GET /books — paginated list + track recent searches
 router.get("/", async (req, res) => {
    try {
-      const { page = 1, search = "" } = req.query;
+      const { page = 1, search = "", languages = "" } = req.query;
+   
       const sessionId = req.sessionID;
-
-      // Track search query per session
       if (search && typeof search === "string" && search.trim()) {
          searchStore.add(sessionId, search.trim());
       }
-
+ 
       const url = new URL("https://gutendex.com/books");
       url.searchParams.set("page", String(page));
       if (search) url.searchParams.set("search", String(search));
-
+   
+      // ✅ forward languages to Gutendex
+      if (languages) url.searchParams.set("languages", String(languages));
+   
       const response = await fetch(url.toString());
-
+   
       if (!response.ok) {
          return res.status(response.status).json({
             error: "Failed to fetch books",
@@ -28,9 +30,9 @@ router.get("/", async (req, res) => {
             statusText: response.statusText,
          });
       }
-
+ 
       const data = await response.json();
-
+   
       return res.status(200).json({
          page: Number(page),
          count: data.count,
@@ -45,7 +47,7 @@ router.get("/", async (req, res) => {
          message: error instanceof Error ? error.message : "Unknown error",
       });
    }
-});
+ });
 
 // GET /books/popular — top 10 from favorites by download_count
 router.get("/popular", async (req, res) => {
