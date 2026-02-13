@@ -12,7 +12,7 @@ dotenv.config({ path: '.env' });
 
 const allowedOrigins = [
    "http://localhost:5173",
-   "https://book-explorer-api-gamma.vercel.app/"
+   "https://book-explorer-api-gamma.vercel.app"
 ];
  
 app.use(cors({
