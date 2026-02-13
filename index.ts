@@ -1,10 +1,29 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import session from "express-session";
+import cors from "cors";
+
+import booksRoute from "./routes/books.js"
+import favoritesRoute from "./routes/favorites.js"
 
 const app = express();
 
 dotenv.config({ path: '.env' });
+
+const allowedOrigins = [
+   "http://localhost:5173"
+];
+ 
+app.use(cors({
+   origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+         callback(null, true);
+      } else {
+         callback(new Error(`CORS blocked: ${origin}`));
+      }
+   },
+   credentials: true,
+}));
 
 app.use(express.json());
 app.use(
@@ -16,9 +35,8 @@ app.use(
    })
 );
 
-import booksRoute from "./routes/books.js"
-
 app.use('/api/v1/books', booksRoute);
+app.use('/api/v1/favorites', favoritesRoute);
 
 const PORT = Number(process.env.PORT) || 3000;
 
